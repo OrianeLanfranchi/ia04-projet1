@@ -9,14 +9,13 @@ import (
 	"sync"
 	"time"
 
-	rad "gitlab.utc.fr/lagruesy/ia04/demos/restagentdemo"
+	rad "github.com/OrianeLanfranchi/ia04-projet1/agt"
 )
 
 type ServerAgent struct {
 	sync.Mutex
-	id       string
-	reqCount int
-	addr     string
+	id   string
+	addr string
 }
 
 func NewServerAgent(addr string) *ServerAgent {
@@ -33,6 +32,7 @@ func (rsa *ServerAgent) checkMethod(method string, w http.ResponseWriter, r *htt
 	return true
 }
 
+// do a request factory
 func (*ServerAgent) decodeRequest(r *http.Request) (req rad.Request, err error) {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(r.Body)

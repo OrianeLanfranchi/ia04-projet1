@@ -4,10 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
+	comsoc "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
 	rad "gitlab.utc.fr/lagruesy/ia04/demos/restagentdemo"
-	//radTest "github.com/OrianeLanfranchi/ia04-projet1/agt"
 )
+
+type Ballot struct {
+	ballotId string
+	profile  comsoc.Profile
+	deadline time.Time
+	votersId []string
+	nbAlts   int
+}
 
 func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	// mise à jour du nombre de requêtes
@@ -29,27 +38,6 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 
 	// traitement de la requête
 	var resp rad.Response
-
-	switch req.Operator {
-	case "*":
-		resp.Result = req.Args[0] * req.Args[1]
-	case "+":
-		resp.Result = req.Args[0] + req.Args[1]
-	case "-":
-		resp.Result = req.Args[0] - req.Args[1]
-	case "/":
-		if req.Args[1] == 0 {
-			msg := fmt.Sprintf("Can't be divided by 0")
-			w.Write([]byte(msg))
-		} else {
-			resp.Result = req.Args[0] / req.Args[1]
-		}
-	default:
-		w.WriteHeader(http.StatusNotImplemented)
-		msg := fmt.Sprintf("Unkonwn command '%s'", req.Operator)
-		w.Write([]byte(msg))
-		return
-	}
 
 	w.WriteHeader(http.StatusOK)
 	serial, _ := json.Marshal(resp)
