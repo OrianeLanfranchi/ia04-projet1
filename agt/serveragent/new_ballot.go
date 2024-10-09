@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	rad "gitlab.utc.fr/lagruesy/ia04/demos/restagentdemo"
+	//radTest "github.com/OrianeLanfranchi/ia04-projet1/agt"
 )
 
 func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
