@@ -1,4 +1,4 @@
-package restagentdemo
+package serveragent
 
 import "time"
 
