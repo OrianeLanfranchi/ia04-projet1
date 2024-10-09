@@ -4,6 +4,11 @@ func CondorcetWinner(p Profile) (bestAlts []Alternative, err error) {
 	//fmt.Println("(CondorcetWinner) - entered")
 	count := make(Count)
 
+	err = checkProfileFromProfile(p)
+	if err != nil {
+		return nil, err
+	}
+
 	//on suppose que le premier élément du profil est correctement formé
 	var alts = p[0]
 

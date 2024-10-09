@@ -5,10 +5,6 @@ import (
 	"slices"
 )
 
-type Alternative int
-type Profile [][]Alternative
-type Count map[Alternative]int
-
 // renvoie l'indice ou se trouve alt dans prefs
 func rank(alt Alternative, prefs []Alternative) int {
 	for i := range prefs {
@@ -60,5 +56,18 @@ func checkProfile(prefs []Alternative, alts []Alternative) error {
 	return nil
 }
 
-// vérifie le profil donné, par ex. qu'ils sont tous complets et que chaque alternative de alts apparaît exactement une fois par préférences
-// func checkProfileAlternative(prefs Profile, alts []Alternative) error
+func checkProfileAlternative(prefs Profile, alts []Alternative) error {
+	for _, pref := range prefs {
+		return checkProfile(pref, alts)
+	}
+	return nil
+}
+
+func checkProfileFromProfile(prof Profile) (err error) {
+	alts := make([]Alternative, 0)
+	for i := 1; i <= len(prof[0]); i++ {
+		alts = append(alts, Alternative(i))
+	}
+	err = checkProfileAlternative(prof, alts)
+	return
+}

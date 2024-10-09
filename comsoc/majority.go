@@ -5,6 +5,11 @@ package comsoc
 func MajoritySWF(p Profile) (count Count, err error) {
 	count = make(Count)
 
+	err = checkProfileFromProfile(p)
+	if err != nil {
+		return nil, err
+	}
+
 	//on suppose que le premier élément du profil est correctement formé
 	var alts = p[0]
 	//fmt.Println("(MajoritySWF) - (p[0]) - ", p[0])

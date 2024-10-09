@@ -3,6 +3,11 @@ package comsoc
 func ApprovalSWF(p Profile, thresholds []int) (count Count, err error) {
 	count = make(Count)
 
+	err = checkProfileFromProfile(p)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, alt := range p[0] {
 		count[alt] = 0
 	}
