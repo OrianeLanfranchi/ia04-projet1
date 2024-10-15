@@ -14,8 +14,9 @@ import (
 
 type ServerAgent struct {
 	sync.Mutex
-	id   string
-	addr string
+	id      string
+	addr    string
+	ballots []rad.BallotResponse
 }
 
 func NewServerAgent(addr string) *ServerAgent {
@@ -32,8 +33,8 @@ func (rsa *ServerAgent) checkMethod(method string, w http.ResponseWriter, r *htt
 	return true
 }
 
-// do a request factory
-func (*ServerAgent) decodeRequest(r *http.Request) (req rad.Request, err error) {
+// do a decoderequest factory
+func decodeRequest[Req rad.Request](r *http.Request) (req Req, err error) {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(r.Body)
 	err = json.Unmarshal(buf.Bytes(), &req)

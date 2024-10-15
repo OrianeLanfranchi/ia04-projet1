@@ -1,12 +1,10 @@
 package serveragent
 
-import "time"
-
 // Requests
 type BallotRequest struct {
-	Rule     string    `json:"rule"`
-	Deadline time.Time `json:"deadline"`
-	NbAlts   int       `json:"#alts"`
+	Rule     string `json:"rule"`
+	Deadline string `json:"deadline"`
+	NbAlts   int    `json:"#alts"`
 }
 
 type VoteRequest struct {
@@ -28,4 +26,8 @@ type BallotResponse struct {
 type ResultResponse struct {
 	Winner  int   `json:"winner"`
 	Ranking []int `json:"ranking"`
+}
+
+type Request interface {
+	BallotRequest | VoteRequest
 }

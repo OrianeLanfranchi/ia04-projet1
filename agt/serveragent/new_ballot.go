@@ -6,17 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	comsoc "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
-	rad "gitlab.utc.fr/lagruesy/ia04/demos/restagentdemo"
+	rad "github.com/OrianeLanfranchi/ia04-projet1/agt"
 )
-
-type Ballot struct {
-	ballotId string
-	profile  comsoc.Profile
-	deadline time.Time
-	votersId []string
-	nbAlts   int
-}
 
 func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	// mise à jour du nombre de requêtes
@@ -29,15 +20,35 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// décodage de la requête
-	req, err := rsa.decodeRequest(r)
+	req, err := decodeRequest[rad.BallotRequest](r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
 		return
 	}
 
+	// vérirification de la date
+	deadline, errDate := time.Parse(time.UnixDate, req.Deadline)
+
+	if errDate != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		msg := fmt.Sprintf("'%s' n'est pas au format UnixDate", req.Deadline)
+		w.Write([]byte(msg))
+		return
+	}
+
+	if deadline.Before(time.Now()) {
+		w.WriteHeader(http.StatusBadRequest)
+		msg := fmt.Sprintf("'%s' est une date antérieure à la date présente", req.Deadline)
+		w.Write([]byte(msg))
+		return
+	}
+
 	// traitement de la requête
-	var resp rad.Response
+	var resp rad.BallotResponse
+
+	resp.ID = fmt.Sprintf("ballot%d", len(rsa.ballots)+1)
+	rsa.ballots = append(rsa.ballots, resp)
 
 	w.WriteHeader(http.StatusOK)
 	serial, _ := json.Marshal(resp)
