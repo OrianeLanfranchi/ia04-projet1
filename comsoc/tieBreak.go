@@ -69,3 +69,15 @@ func SCFFactory(scf func(p Profile) ([]Alternative, error), tb func([]Alternativ
 		return tb(bestAlts)
 	}
 }
+
+func SCFOptionFactory(scf func(p Profile, thresholds []int) ([]Alternative, error), tb func([]Alternative) (Alternative, error)) func(Profile, []int) (Alternative, error) {
+	return func(p Profile, thresholds []int) (Alternative, error) {
+		bestAlts, errSCF := scf(p, thresholds)
+
+		if errSCF != nil {
+			return Alternative(-1), errSCF
+		}
+
+		return tb(bestAlts)
+	}
+}

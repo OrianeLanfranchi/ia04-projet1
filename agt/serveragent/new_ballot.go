@@ -50,6 +50,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	var resp rad.BallotResponse
 
 	resp.ID = fmt.Sprintf("ballot%d", len(rsa.ballots)+1)
+
 	var ballot rad.Ballot = rad.Ballot{
 		Profile:  make(cs.Profile, 0),
 		Options:  make([][]int, 0),
@@ -78,13 +79,16 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 		ballot.SCF = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
 	case "approval":
 		//TODO : SCFFactory with options
-		//ballot.SCF = cs.SCFFactory(cs.ApprovalSCF, tieBreak)
+		//ballot.SCF = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
 		status = http.StatusNotImplemented
 	default:
 		status = http.StatusNotImplemented
 	}
 
 	rsa.ballots[resp.ID] = ballot
+
+	//DEBUG - Si on a un pb c'est parce qu'on a lancé une goroutine sur un mutex locked
+	// TODO - lancer une goroutine qui handle le ballot (ballotHandler pour le nom ?)
 
 	w.WriteHeader(status)
 	serial, _ := json.Marshal(resp)
