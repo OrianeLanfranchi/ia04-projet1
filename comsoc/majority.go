@@ -19,7 +19,7 @@ func MajoritySWF(p Profile) (count Count, err error) {
 	}
 
 	for i := range p {
-		err = checkProfile(p[i], alts)
+		err = CheckProfile(p[i], alts)
 		if err != nil {
 			return nil, err
 		}

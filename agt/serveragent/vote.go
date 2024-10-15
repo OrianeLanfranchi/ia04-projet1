@@ -87,9 +87,21 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 		prefs = append(prefs, cs.Alternative(req.Prefs[i]))
 	}
 
-	// TODO - système pour vérifier les profils (il va falloir discriminer sur la base de la règle, parce que pas de vérification (autre que au moins une pref) dans le cas de Approval)
+	// Système pour vérifier les profils (il va falloir discriminer sur la base de la règle, parce que pas de vérification (autre que au moins une pref) dans le cas de Approval)
+	// Oui, c'est pas le plus propre, je sais
 	if ballot.Rule != "approval" { //on vérifie que le profil est complet et bien construit
-		// TODO
+		alternativesTemp := make([]cs.Alternative, ballot.NbAlts)
+		for i := range ballot.NbAlts {
+			alternativesTemp[i] = cs.Alternative(i + 1)
+		}
+		errCheck := cs.CheckProfile(prefs, alternativesTemp)
+
+		if errCheck != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			msg := fmt.Sprintf("'%s' - Les préférences du votant %s ne sont pas bien formattées", req.VoteId, req.AgentId)
+			w.Write([]byte(msg))
+			return
+		}
 	}
 
 	ballot.Profile = append(ballot.Profile, prefs)

@@ -37,7 +37,7 @@ func maxCount(count Count) (bestAlts []Alternative) {
 }
 
 // vérifie les préférences d'un agent, par ex. qu'ils sont tous complets et que chaque alternative n'apparaît qu'une seule fois
-func checkProfile(prefs []Alternative, alts []Alternative) error {
+func CheckProfile(prefs []Alternative, alts []Alternative) error {
 	//vérifie que profil complet
 	if len(prefs) != len(alts) {
 		return errors.New("(checkProfile) - prefs et alts n'ont pas la même taille")
@@ -58,7 +58,7 @@ func checkProfile(prefs []Alternative, alts []Alternative) error {
 
 func checkProfileAlternative(prefs Profile, alts []Alternative) error {
 	for _, pref := range prefs {
-		return checkProfile(pref, alts)
+		return CheckProfile(pref, alts)
 	}
 	return nil
 }
