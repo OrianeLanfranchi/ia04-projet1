@@ -41,8 +41,10 @@ type ResultResponse struct {
 
 // Useful types
 type Ballot struct {
+	Rule     string
 	Profile  cs.Profile
 	SCF      SCFWrapper
+	SWF      SWFWrapper
 	Options  [][]int
 	VotersId []string
 	NbAlts   int
@@ -50,6 +52,7 @@ type Ballot struct {
 	Result   ResultResponse
 }
 
+// SCF Type
 type SCFNoOption func(cs.Profile) (cs.Alternative, error)
 type SCFOption func(cs.Profile, []int) (cs.Alternative, error)
 
@@ -73,5 +76,32 @@ func (w SCFWrapper) Call(profile cs.Profile, options [][]int) (cs.Alternative, e
 		}
 		return w.FuncOneOption(profile, listOptions)
 	}
-	return cs.Alternative(-1), errors.New("no valid function provided")
+	return cs.Alternative(-1), errors.New("(w SCFWrapper) - Pas de fonction valide")
+}
+
+// SWF
+type SWFNoOption func(cs.Profile) ([]cs.Alternative, error)
+type SWFOption func(cs.Profile, []int) ([]cs.Alternative, error)
+
+type SCWFFunction interface {
+	Call(profile cs.Profile, options []int) ([]cs.Alternative, error)
+}
+
+type SWFWrapper struct {
+	FuncNoOption  SWFNoOption
+	FuncOneOption SWFOption
+}
+
+// TODO - améliorer la méthode Call pour qu'elle fasse toutes les vérifications
+func (w SWFWrapper) Call(profile cs.Profile, options [][]int) ([]cs.Alternative, error) {
+	if w.FuncNoOption != nil {
+		return w.FuncNoOption(profile)
+	} else if w.FuncOneOption != nil {
+		listOptions := make([]int, len(options))
+		for i, option := range options {
+			listOptions[i] = option[0]
+		}
+		return w.FuncOneOption(profile, listOptions)
+	}
+	return nil, errors.New("(w SWFWrapper) - Pas de fonction valide")
 }

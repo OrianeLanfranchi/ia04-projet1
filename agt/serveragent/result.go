@@ -7,7 +7,7 @@ import (
 	"time"
 
 	rad "github.com/OrianeLanfranchi/ia04-projet1/agt"
-	//cs "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
+	cs "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
 )
 
 func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ballot.Deadline.Before(time.Now()) {
+	if ballot.Deadline.After(time.Now()) {
 		w.WriteHeader(http.StatusTooEarly)
 		msg := fmt.Sprintf("'%s' n'est pas encore terminé", req.BallotId)
 		w.Write([]byte(msg))
@@ -74,7 +74,23 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ranking, errSWF := ballot.SWF.Call(ballot.Profile, ballot.Options)
+
+	if errSWF != nil && winner == cs.Alternative(-1) { //parce que si c'est Condorcet on aura évidemment une erreur sauf qu'on aura pas de ranking (c'est pas propre, je sais) ((et en plus techniquement ce bout de code ne sert pas))
+		w.WriteHeader(http.StatusInternalServerError)
+		msg := fmt.Sprintf("'%s' ne peut pas être traité", req.BallotId)
+		w.Write([]byte(msg))
+		return
+	}
+
+	ballot.Result.Ranking = make([]int, len(ranking))
+	for i := range ranking {
+		ballot.Result.Ranking[i] = int(ranking[i])
+	}
+
 	ballot.Result.Winner = int(winner)
+
+	rsa.ballots[req.BallotId] = ballot
 
 	w.WriteHeader(http.StatusOK)
 	serial, _ := json.Marshal(ballot.Result)

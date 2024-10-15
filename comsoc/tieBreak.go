@@ -81,3 +81,35 @@ func SCFOptionFactory(scf func(p Profile, thresholds []int) ([]Alternative, erro
 		return tb(bestAlts)
 	}
 }
+
+func SWFOptionFactory(swf func(p Profile, thresholds []int) (Count, error), tb func([]Alternative) (Alternative, error)) func(Profile, []int) ([]Alternative, error) {
+	return func(p Profile, thresholds []int) ([]Alternative, error) {
+		count, errSWF := swf(p, thresholds)
+
+		if errSWF != nil {
+			return nil, errSWF
+		}
+
+		var sortedAlts []Alternative
+
+		for len(count) > 0 {
+			//récupération des meilleurs alternatives
+			bestAlts := maxCount(count)
+
+			for i := range bestAlts {
+				delete(count, bestAlts[i])
+			}
+
+			for len(bestAlts) > 0 {
+				bestAlt, errTB := tb(bestAlts)
+				if errTB != nil {
+					return nil, errTB
+				}
+				sortedAlts = append(sortedAlts, bestAlt)
+				indice := rank(bestAlt, bestAlts)
+				bestAlts = slices.Delete(bestAlts, indice, indice+1)
+			}
+		}
+		return sortedAlts, nil
+	}
+}

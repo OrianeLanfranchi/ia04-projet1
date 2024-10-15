@@ -49,11 +49,12 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	// traitement de la requête
 	var resp rad.BallotResponse
 
-	resp.ID = fmt.Sprintf("ballot%d", len(rsa.ballots)+1)
+	resp.ID = fmt.Sprintf("vote%d", len(rsa.ballots)+1)
 
 	var ballot rad.Ballot = rad.Ballot{
+		Rule:     req.Rule,
 		Profile:  make(cs.Profile, 0),
-		Options:  nil,
+		Options:  make([][]int, 0),
 		VotersId: make([]string, 0),
 		NbAlts:   req.NbAlts,
 		Deadline: deadline,
@@ -71,14 +72,16 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	switch req.Rule {
 	case "majority":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.MajoritySCF, tieBreak)
+		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.MajoritySWF, tieBreak)
 	case "borda":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.BordaSCF, tieBreak)
+		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.BordaSWF, tieBreak)
 	case "condorcet":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
 	case "approval":
 		//DEBUG if it crashes then it might be due to this
-		ballot.Options = make([][]int, 0)
 		ballot.SCF.FuncOneOption = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
+		ballot.SWF.FuncOneOption = cs.SWFOptionFactory(cs.ApprovalSWF, tieBreak)
 	default:
 		w.WriteHeader(http.StatusNotImplemented)
 		msg := fmt.Sprintf("'%s' n'est pas une méthode implémentée", req.Rule)
