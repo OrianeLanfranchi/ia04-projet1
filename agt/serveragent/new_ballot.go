@@ -3,6 +3,7 @@ package serveragent
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -57,9 +58,35 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 		Deadline: deadline,
 		Result:   rad.ResultResponse{}}
 
+	var orderedAlts = make([]cs.Alternative, req.NbAlts)
+
+	for i := range req.NbAlts {
+		orderedAlts[i] = cs.Alternative(i + 1)
+	}
+	rand.Shuffle(req.NbAlts, func(i, j int) { orderedAlts[i], orderedAlts[j] = orderedAlts[j], orderedAlts[i] })
+
+	tieBreak := cs.TieBreakFactory(orderedAlts)
+
+	var status = http.StatusOK
+
+	switch req.Rule {
+	case "majority":
+		ballot.SCF = cs.SCFFactory(cs.MajoritySCF, tieBreak)
+	case "borda":
+		ballot.SCF = cs.SCFFactory(cs.BordaSCF, tieBreak)
+	case "condorcet":
+		ballot.SCF = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
+	case "approval":
+		//TODO : SCFFactory with options
+		//ballot.SCF = cs.SCFFactory(cs.ApprovalSCF, tieBreak)
+		status = http.StatusNotImplemented
+	default:
+		status = http.StatusNotImplemented
+	}
+
 	rsa.ballots[resp.ID] = ballot
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(status)
 	serial, _ := json.Marshal(resp)
 	w.Write(serial)
 }

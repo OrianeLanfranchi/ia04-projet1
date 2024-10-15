@@ -41,6 +41,7 @@ type ResultResponse struct {
 // Useful types
 type Ballot struct {
 	Profile  cs.Profile
+	SCF      func(cs.Profile) (cs.Alternative, error)
 	Options  [][]int
 	VotersId []string
 	NbAlts   int
