@@ -53,7 +53,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 
 	var ballot rad.Ballot = rad.Ballot{
 		Profile:  make(cs.Profile, 0),
-		Options:  make([][]int, 0),
+		Options:  nil,
 		VotersId: make([]string, 0),
 		NbAlts:   req.NbAlts,
 		Deadline: deadline,
@@ -68,21 +68,26 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 
 	tieBreak := cs.TieBreakFactory(orderedAlts)
 
-	var status = http.StatusOK
-
 	switch req.Rule {
 	case "majority":
-		ballot.SCF = cs.SCFFactory(cs.MajoritySCF, tieBreak)
+		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.MajoritySCF, tieBreak)
 	case "borda":
-		ballot.SCF = cs.SCFFactory(cs.BordaSCF, tieBreak)
+		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.BordaSCF, tieBreak)
 	case "condorcet":
-		ballot.SCF = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
+		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
 	case "approval":
 		//TODO : SCFFactory with options
-		//ballot.SCF = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
-		status = http.StatusNotImplemented
+		ballot.Options = make([][]int, 0)
+		ballot.SCF.FuncOption = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
+		w.WriteHeader(http.StatusNotImplemented)
+		serial, _ := json.Marshal(resp)
+		w.Write(serial)
+		return
 	default:
-		status = http.StatusNotImplemented
+		w.WriteHeader(http.StatusNotImplemented)
+		serial, _ := json.Marshal(resp)
+		w.Write(serial)
+		return
 	}
 
 	rsa.ballots[resp.ID] = ballot
@@ -90,7 +95,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	//DEBUG - Si on a un pb c'est parce qu'on a lancé une goroutine sur un mutex locked
 	// TODO - lancer une goroutine qui handle le ballot (ballotHandler pour le nom ?)
 
-	w.WriteHeader(status)
+	w.WriteHeader(http.StatusOK)
 	serial, _ := json.Marshal(resp)
 	w.Write(serial)
 }

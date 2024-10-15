@@ -1,6 +1,7 @@
 package serveragent
 
 import (
+	"errors"
 	"time"
 
 	cs "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
@@ -25,7 +26,7 @@ type ResultRequest struct {
 }
 
 type Request interface {
-	BallotRequest | VoteRequest
+	BallotRequest | VoteRequest | ResultRequest
 }
 
 // Responses
@@ -41,10 +42,31 @@ type ResultResponse struct {
 // Useful types
 type Ballot struct {
 	Profile  cs.Profile
-	SCF      func(cs.Profile) (cs.Alternative, error)
+	SCF      SCFWrapper
 	Options  [][]int
 	VotersId []string
 	NbAlts   int
 	Deadline time.Time
 	Result   ResultResponse
+}
+
+type SCFNoOption func(cs.Profile) (cs.Alternative, error)
+type SCFOption func(cs.Profile, []int) (cs.Alternative, error)
+
+type SCFFunction interface {
+	Call(profile cs.Profile, options []int) (cs.Alternative, error)
+}
+
+type SCFWrapper struct {
+	FuncNoOption SCFNoOption
+	FuncOption   SCFOption
+}
+
+func (w SCFWrapper) Call(profile cs.Profile, options []int) (cs.Alternative, error) {
+	if w.FuncNoOption != nil {
+		return w.FuncNoOption(profile)
+	} else if w.FuncOption != nil {
+		return w.FuncOption(profile, options)
+	}
+	return cs.Alternative(-1), errors.New("no valid function provided")
 }
