@@ -78,8 +78,8 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.BordaSWF, tieBreak)
 	case "condorcet":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
+		// TODO Il faudra anticiper dans le calcul des résultats (result.go) de Condorcet n'a pas de SWF OU en créer une dans comsoc/Condorcet.go (imo ça peut être bien, ça évite des vérifs après)
 	case "approval":
-		//DEBUG if it crashes then it might be due to this
 		ballot.SCF.FuncOneOption = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
 		ballot.SWF.FuncOneOption = cs.SWFOptionFactory(cs.ApprovalSWF, tieBreak)
 	default:

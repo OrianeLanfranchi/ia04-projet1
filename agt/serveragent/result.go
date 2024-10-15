@@ -52,7 +52,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// else on le calcule directement
-	//TODO : Ranking (pour l'instant je le laisse à 0 parce que flemme)
+	//TODO - Ranking (pour l'instant je le laisse à 0 parce que flemme)
 
 	//DEBUG - Bien vérifier le formattage des options. Logiquement on ne traite que les cas où il y a 0 ou 1 option. Faire un système scalable si on devait update le serveur pour qu'il prenne en compte des votes avec + d'options
 	if ballot.Options == nil && ballot.SCF.FuncNoOption == nil {
@@ -84,6 +84,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//DEBUG - ça va planter ici si on a du Condorcet parce que ranking sera nil
+	// TODO - faire en sorte que ça ne plante pas
 	ballot.Result.Ranking = make([]int, len(ranking))
 	for i := range ranking {
 		ballot.Result.Ranking[i] = int(ranking[i])
