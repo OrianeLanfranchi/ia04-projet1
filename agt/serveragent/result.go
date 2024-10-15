@@ -83,6 +83,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//DEBUG - ça va planter ici si on a du Condorcet parce que ranking sera nil
 	ballot.Result.Ranking = make([]int, len(ranking))
 	for i := range ranking {
 		ballot.Result.Ranking[i] = int(ranking[i])
