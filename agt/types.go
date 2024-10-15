@@ -1,5 +1,11 @@
 package serveragent
 
+import (
+	"time"
+
+	cs "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
+)
+
 // Requests
 type BallotRequest struct {
 	Rule     string `json:"rule"`
@@ -18,6 +24,10 @@ type ResultRequest struct {
 	BallotId string `json:"ballot-id"`
 }
 
+type Request interface {
+	BallotRequest | VoteRequest
+}
+
 // Responses
 type BallotResponse struct {
 	ID string `json:"ballot-id"`
@@ -28,6 +38,12 @@ type ResultResponse struct {
 	Ranking []int `json:"ranking"`
 }
 
-type Request interface {
-	BallotRequest | VoteRequest
+// Useful types
+type Ballot struct {
+	Profile  cs.Profile
+	Options  [][]int
+	VotersId []string
+	NbAlts   int
+	Deadline time.Time
+	Result   ResultResponse
 }

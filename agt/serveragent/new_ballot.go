@@ -7,6 +7,7 @@ import (
 	"time"
 
 	rad "github.com/OrianeLanfranchi/ia04-projet1/agt"
+	cs "github.com/OrianeLanfranchi/ia04-projet1/comsoc"
 )
 
 func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +49,15 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	var resp rad.BallotResponse
 
 	resp.ID = fmt.Sprintf("ballot%d", len(rsa.ballots)+1)
-	rsa.ballots = append(rsa.ballots, resp)
+	var ballot rad.Ballot = rad.Ballot{
+		Profile:  make(cs.Profile, 0),
+		Options:  make([][]int, 0),
+		VotersId: make([]string, 0),
+		NbAlts:   req.NbAlts,
+		Deadline: deadline,
+		Result:   rad.ResultResponse{}}
+
+	rsa.ballots[resp.ID] = ballot
 
 	w.WriteHeader(http.StatusOK)
 	serial, _ := json.Marshal(resp)

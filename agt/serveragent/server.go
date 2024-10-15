@@ -16,7 +16,7 @@ type ServerAgent struct {
 	sync.Mutex
 	id      string
 	addr    string
-	ballots []rad.BallotResponse
+	ballots map[string]rad.Ballot
 }
 
 func NewServerAgent(addr string) *ServerAgent {
