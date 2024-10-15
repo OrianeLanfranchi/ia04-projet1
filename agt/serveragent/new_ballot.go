@@ -57,7 +57,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 		VotersId: make([]string, 0),
 		NbAlts:   req.NbAlts,
 		Deadline: deadline,
-		Result:   rad.ResultResponse{}}
+		Result:   rad.ResultResponse{Winner: -1, Ranking: make([]int, 0)}}
 
 	var orderedAlts = make([]cs.Alternative, req.NbAlts)
 
@@ -76,17 +76,13 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	case "condorcet":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
 	case "approval":
-		//TODO : SCFFactory with options
+		//DEBUG if it crashes then it might be due to this
 		ballot.Options = make([][]int, 0)
-		ballot.SCF.FuncOption = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
-		w.WriteHeader(http.StatusNotImplemented)
-		serial, _ := json.Marshal(resp)
-		w.Write(serial)
-		return
+		ballot.SCF.FuncOneOption = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
 	default:
 		w.WriteHeader(http.StatusNotImplemented)
-		serial, _ := json.Marshal(resp)
-		w.Write(serial)
+		msg := fmt.Sprintf("'%s' n'est pas une méthode implémentée", req.Rule)
+		w.Write([]byte(msg))
 		return
 	}
 

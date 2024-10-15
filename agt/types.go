@@ -58,15 +58,20 @@ type SCFFunction interface {
 }
 
 type SCFWrapper struct {
-	FuncNoOption SCFNoOption
-	FuncOption   SCFOption
+	FuncNoOption  SCFNoOption
+	FuncOneOption SCFOption
 }
 
-func (w SCFWrapper) Call(profile cs.Profile, options []int) (cs.Alternative, error) {
+// TODO - améliorer la méthode Call pour qu'elle fasse toutes les vérifications
+func (w SCFWrapper) Call(profile cs.Profile, options [][]int) (cs.Alternative, error) {
 	if w.FuncNoOption != nil {
 		return w.FuncNoOption(profile)
-	} else if w.FuncOption != nil {
-		return w.FuncOption(profile, options)
+	} else if w.FuncOneOption != nil {
+		listOptions := make([]int, len(options))
+		for i, option := range options {
+			listOptions[i] = option[0]
+		}
+		return w.FuncOneOption(profile, listOptions)
 	}
 	return cs.Alternative(-1), errors.New("no valid function provided")
 }
