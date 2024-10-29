@@ -55,7 +55,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 		Rule:     req.Rule,
 		Profile:  make(cs.Profile, 0),
 		Options:  make([][]int, 0),
-		VotersId: make([]string, 0),
+		VotersId: req.VotersId,
 		NbAlts:   req.NbAlts,
 		Deadline: deadline,
 		Result:   rad.ResultResponse{Winner: -1, Ranking: make([]int, 0)}}
@@ -90,6 +90,9 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rsa.ballots[resp.ID] = ballot
+
+	fmt.Println("DEBUG NEW_BALLOT :")
+	fmt.Println(ballot)
 
 	//DEBUG - Si on a un pb c'est parce qu'on a lancé une goroutine sur un mutex locked
 	// TODO - lancer une goroutine qui handle le ballot (ballotHandler pour le nom ?)

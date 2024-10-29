@@ -1,7 +1,6 @@
 package serveragent
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"slices"
@@ -67,18 +66,20 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 	ballot.VotersId = removeFromSliceString(ballot.VotersId, req.AgentId)
 
 	// Vérification sur la taille des préférences
-	if len(req.Prefs) == 0 || len(req.Prefs) > ballot.NbAlts {
+	if (len(req.Prefs) == 0) || (len(req.Prefs) > ballot.NbAlts) {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := fmt.Sprintf("'%s' - Les préférences du votant %s ne sont pas bien formattées", req.VoteId, req.AgentId)
+		msg := fmt.Sprintf("'%s' - Les préférences du votant %s ne sont pas bien formattées (trop ou pas assez d'alternatives)", req.VoteId, req.AgentId)
 		w.Write([]byte(msg))
 		return
 	}
 
-	prefs := make([]cs.Alternative, len(req.Prefs))
+	prefs := make([]cs.Alternative, 0)
 
 	for i := range req.Prefs {
 		// On vérifie au passage que les valeurs des préférences ne sont pas aberrantes
-		if req.Prefs[i] > ballot.NbAlts || req.Prefs[i] < 1 {
+		if (req.Prefs[i] > ballot.NbAlts) || (req.Prefs[i] < 1) {
+			fmt.Println("DEBUG VOTE")
+			fmt.Println(req.Prefs[i])
 			w.WriteHeader(http.StatusBadRequest)
 			msg := fmt.Sprintf("'%s' - Les préférences du votant %s ne sont pas bien formattées", req.VoteId, req.AgentId)
 			w.Write([]byte(msg))
@@ -91,10 +92,15 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 	// Oui, c'est pas le plus propre, je sais
 	if ballot.Rule != "approval" { //on vérifie que le profil est complet et bien construit
 		alternativesTemp := make([]cs.Alternative, ballot.NbAlts)
+		fmt.Println("DEBUG VOTE")
 		for i := range ballot.NbAlts {
 			alternativesTemp[i] = cs.Alternative(i + 1)
+			fmt.Println(req.Prefs[i])
 		}
+
 		errCheck := cs.CheckProfile(prefs, alternativesTemp)
+
+		fmt.Println(errCheck)
 
 		if errCheck != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -113,6 +119,6 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 	rsa.ballots[req.VoteId] = ballot
 
 	w.WriteHeader(http.StatusOK)
-	serial, _ := json.Marshal(ballot.Result)
-	w.Write(serial)
+	/*serial, _ := json.Marshal(ballot.Result)
+	w.Write(serial)*/
 }

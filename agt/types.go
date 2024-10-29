@@ -9,9 +9,10 @@ import (
 
 // Requests
 type BallotRequest struct {
-	Rule     string `json:"rule"`
-	Deadline string `json:"deadline"`
-	NbAlts   int    `json:"#alts"`
+	Rule     string   `json:"rule"`
+	Deadline string   `json:"deadline"`
+	VotersId []string `json:"voter-ids"`
+	NbAlts   int      `json:"#alts"`
 }
 
 type VoteRequest struct {

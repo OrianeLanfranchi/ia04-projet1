@@ -2,6 +2,7 @@ package comsoc
 
 import (
 	"errors"
+	"fmt"
 	"slices"
 )
 
@@ -40,15 +41,17 @@ func maxCount(count Count) (bestAlts []Alternative) {
 func CheckProfile(prefs []Alternative, alts []Alternative) error {
 	//vérifie que profil complet
 	if len(prefs) != len(alts) {
+		fmt.Println("(checkProfile) - len(prefs) - ", len(prefs))
+		fmt.Println("(checkProfile) - len(alts) - ", len(alts))
 		return errors.New("(checkProfile) - prefs et alts n'ont pas la même taille")
 	}
 
-	//fmt.Println("(checkProfile) - (prefs) - ", prefs)
-	//fmt.Println("(checkProfile) - (alts) - ", alts)
+	fmt.Println("(checkProfile) - (prefs) - ", prefs)
+	fmt.Println("(checkProfile) - (alts) - ", alts)
 
 	for _, pref := range prefs {
 		if !slices.Contains(alts, pref) {
-			//fmt.Println("(checkProfile) - (pref) - ", pref)
+			fmt.Println("(checkProfile) - (pref) - ", pref)
 			return errors.New("(checkProfile) - Il manque une préférence")
 		}
 	}
