@@ -67,6 +67,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	}
 	rand.Shuffle(req.NbAlts, func(i, j int) { orderedAlts[i], orderedAlts[j] = orderedAlts[j], orderedAlts[i] })
 
+	fmt.Println("Debug - new_ballot - ordered alts : ", orderedAlts)
 	tieBreak := cs.TieBreakFactory(orderedAlts)
 
 	switch req.Rule {

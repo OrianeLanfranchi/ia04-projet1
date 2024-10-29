@@ -13,6 +13,7 @@ func TieBreakFactory(orderedAlts []Alternative) func([]Alternative) (Alternative
 				bestAlt = alt
 			}
 		}
+		fmt.Println("Debug - tieBreak - bestAlt : ", bestAlt)
 		return bestAlt, nil
 	}
 }
