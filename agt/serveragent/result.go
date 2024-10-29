@@ -44,6 +44,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 
 	// traitement de la requête
 
+	//si on a déjà traité les résultats du ballot :
 	if ballot.Result.Winner != -1 {
 		w.WriteHeader(http.StatusOK)
 		serial, _ := json.Marshal(ballot.Result)
@@ -52,6 +53,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// else on le calcule directement
+	// TODO - le mettre dans une fonction dédiée ?
 	//TODO - Ranking (pour l'instant je le laisse à 0 parce que flemme)
 
 	//DEBUG - Bien vérifier le formattage des options. Logiquement on ne traite que les cas où il y a 0 ou 1 option. Faire un système scalable si on devait update le serveur pour qu'il prenne en compte des votes avec + d'options
