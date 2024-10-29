@@ -48,6 +48,9 @@ func (rsa *ServerAgent) Start() {
 	mux.HandleFunc("POST /vote", rsa.doVote)
 	mux.HandleFunc("POST /result", rsa.doResult)
 
+	//init map
+	rsa.ballots = make(map[string]rad.Ballot)
+
 	// création du serveur http
 	s := &http.Server{
 		Addr:           rsa.addr,
