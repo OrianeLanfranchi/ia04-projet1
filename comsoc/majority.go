@@ -4,6 +4,7 @@ package comsoc
 
 func MajoritySWF(p Profile) (count Count, err error) {
 	err = checkProfileFromProfile(p)
+
 	if err != nil {
 		return nil, err
 	}
@@ -12,6 +13,7 @@ func MajoritySWF(p Profile) (count Count, err error) {
 	for _, alt := range p[0] {
 		count[alt] = 0
 	}
+
 	//décompte des votes
 	for _, pref := range p {
 		count[pref[0]]++
