@@ -1,34 +1,26 @@
 package comsoc
 
 import (
-	"errors"
+	"fmt"
 	"slices"
 )
 
 func TieBreakFactory(orderedAlts []Alternative) func([]Alternative) (Alternative, error) {
-	return func(alts []Alternative) (Alternative, error) {
-		if len(orderedAlts) == 0 {
-			return -1, errors.New("(TieBreakFactory) - orderedAlts is null")
-		}
-
-		if len(alts) == 0 {
-			return -1, errors.New("(TieBreakFactory) - alts is null")
-		}
-
-		//on renvoie le premier élément que orderedAlts a en commun avec alts
-		for i := range orderedAlts {
-			if slices.Contains(alts, orderedAlts[i]) {
-				return orderedAlts[i], nil
+	return func(bestAlts []Alternative) (Alternative, error) {
+		bestAlt := bestAlts[0]
+		for _, alt := range bestAlts[1:] {
+			if isPref(alt, bestAlt, orderedAlts) {
+				bestAlt = alt
 			}
 		}
-
-		return Alternative(-1), errors.New("(TieBreakFactory) - no common element between orderedAlts and alts")
+		return bestAlt, nil
 	}
 }
 
 func SWFFactory(swf func(p Profile) (Count, error), tb func([]Alternative) (Alternative, error)) func(Profile) ([]Alternative, error) {
 	return func(p Profile) ([]Alternative, error) {
 		count, errSWF := swf(p)
+		fmt.Println("Debug - count SWF : ", count)
 
 		if errSWF != nil {
 			return nil, errSWF
@@ -54,6 +46,7 @@ func SWFFactory(swf func(p Profile) (Count, error), tb func([]Alternative) (Alte
 				bestAlts = slices.Delete(bestAlts, indice, indice+1)
 			}
 		}
+		fmt.Println("Debug - sortedAlts SWF : ", sortedAlts)
 		return sortedAlts, nil
 	}
 }
