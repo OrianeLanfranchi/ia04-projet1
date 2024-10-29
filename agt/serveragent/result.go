@@ -35,7 +35,9 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ballot.Deadline.After(time.Now()) {
+	fmt.Println(time.Now().UTC())
+	fmt.Println(ballot.Deadline)
+	if ballot.Deadline.After(time.Now().UTC()) {
 		w.WriteHeader(http.StatusTooEarly)
 		msg := fmt.Sprintf("'%s' n'est pas encore terminé", req.BallotId)
 		w.Write([]byte(msg))
