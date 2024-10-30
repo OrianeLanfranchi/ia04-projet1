@@ -87,8 +87,9 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//DEBUG - ça va planter ici si on a du Condorcet parce que ranking sera nil
+	//DEBUG - ça peut planter ici si on a du Condorcet parce que ranking sera nil
 	// TODO - faire en sorte que ça ne plante pas
+	fmt.Println("DEBUG (condorcet check)")
 	fmt.Println("ranking :", ranking)
 	ballot.Result.Ranking = make([]int, len(ranking))
 	for i := range ranking {

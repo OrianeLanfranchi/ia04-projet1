@@ -95,7 +95,7 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("DEBUG VOTE")
 		for i := range ballot.NbAlts {
 			alternativesTemp[i] = cs.Alternative(i + 1)
-			fmt.Println(req.Prefs[i])
+			fmt.Println(alternativesTemp[i])
 		}
 
 		errCheck := cs.CheckProfile(prefs, alternativesTemp)
@@ -114,6 +114,13 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 
 	if req.Option != nil {
 		ballot.Options = append(ballot.Options, req.Option)
+	}
+
+	if len(req.Option) == 0 && ballot.Rule == "approval" {
+		w.WriteHeader(http.StatusBadRequest)
+		msg := fmt.Sprintf("'%s' - Les options pour le vote du votant %s ne sont pas bien formattées", req.VoteId, req.AgentId)
+		w.Write([]byte(msg))
+		return
 	}
 
 	rsa.ballots[req.VoteId] = ballot
