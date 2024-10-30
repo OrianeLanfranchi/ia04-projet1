@@ -73,27 +73,29 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 
 	if errSCF != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		msg := fmt.Sprintf("'%s' ne peut pas être traité", req.BallotId)
+		msg := fmt.Sprintf("'%s' ne peut pas être traité ou bien il n'y a pas de gagnant", req.BallotId)
 		w.Write([]byte(msg))
 		return
 	}
 
-	ranking, errSWF := ballot.SWF.Call(ballot.Profile, ballot.Options)
+	if ballot.Rule != "condorcet" {
+		ranking, errSWF := ballot.SWF.Call(ballot.Profile, ballot.Options)
 
-	if errSWF != nil && winner == cs.Alternative(-1) { //parce que si c'est Condorcet on aura évidemment une erreur sauf qu'on aura pas de ranking (c'est pas propre, je sais) ((et en plus techniquement ce bout de code ne sert pas))
-		w.WriteHeader(http.StatusInternalServerError)
-		msg := fmt.Sprintf("'%s' ne peut pas être traité", req.BallotId)
-		w.Write([]byte(msg))
-		return
-	}
+		if errSWF != nil && winner == cs.Alternative(-1) { //parce que si c'est Condorcet on aura évidemment une erreur sauf qu'on aura pas de ranking (c'est pas propre, je sais) ((et en plus techniquement ce bout de code ne sert pas))
+			w.WriteHeader(http.StatusInternalServerError)
+			msg := fmt.Sprintf("'%s' ne peut pas être traité", req.BallotId)
+			w.Write([]byte(msg))
+			return
+		}
 
-	//DEBUG - ça peut planter ici si on a du Condorcet parce que ranking sera nil
-	// TODO - faire en sorte que ça ne plante pas
-	fmt.Println("DEBUG (condorcet check)")
-	fmt.Println("ranking :", ranking)
-	ballot.Result.Ranking = make([]int, len(ranking))
-	for i := range ranking {
-		ballot.Result.Ranking[i] = int(ranking[i])
+		//DEBUG - ça peut planter ici si on a du Condorcet parce que ranking sera nil
+		// TODO - faire en sorte que ça ne plante pas
+		fmt.Println("DEBUG (condorcet check)")
+		fmt.Println("ranking :", ranking)
+		ballot.Result.Ranking = make([]int, len(ranking))
+		for i := range ranking {
+			ballot.Result.Ranking[i] = int(ranking[i])
+		}
 	}
 
 	ballot.Result.Winner = int(winner)

@@ -1,12 +1,16 @@
 package comsoc
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 )
 
 func TieBreakFactory(orderedAlts []Alternative) func([]Alternative) (Alternative, error) {
 	return func(bestAlts []Alternative) (Alternative, error) {
+		if len(bestAlts) == 0 {
+			return -1, errors.New("(TieBreakFactory) - Il n'y a pas de gagnant potentiel")
+		}
 		bestAlt := bestAlts[0]
 		for _, alt := range bestAlts[1:] {
 			if isPref(alt, bestAlt, orderedAlts) {
