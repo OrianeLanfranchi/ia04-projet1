@@ -70,13 +70,15 @@ type SCFWrapper struct {
 func (w SCFWrapper) Call(profile cs.Profile, options [][]int) (cs.Alternative, error) {
 	if w.FuncNoOption != nil {
 		return w.FuncNoOption(profile)
-	} else if w.FuncOneOption != nil {
+	}
+	if w.FuncOneOption != nil {
 		listOptions := make([]int, len(options))
 		for i, option := range options {
 			listOptions[i] = option[0]
 		}
 		return w.FuncOneOption(profile, listOptions)
 	}
+
 	return cs.Alternative(-1), errors.New("(w SCFWrapper) - Pas de fonction valide")
 }
 
@@ -97,7 +99,8 @@ type SWFWrapper struct {
 func (w SWFWrapper) Call(profile cs.Profile, options [][]int) ([]cs.Alternative, error) {
 	if w.FuncNoOption != nil {
 		return w.FuncNoOption(profile)
-	} else if w.FuncOneOption != nil {
+	}
+	if w.FuncOneOption != nil {
 		listOptions := make([]int, len(options))
 		for i, option := range options {
 			listOptions[i] = option[0]
