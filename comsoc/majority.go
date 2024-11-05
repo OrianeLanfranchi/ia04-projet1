@@ -18,7 +18,7 @@ func MajoritySWF(p Profile) (count Count, err error) {
 	for _, pref := range p {
 		count[pref[0]]++
 	}
-	return
+	return count, nil
 }
 
 func MajoritySCF(p Profile) (bestAlts []Alternative, err error) {

@@ -37,6 +37,21 @@ func maxCount(count Count) (bestAlts []Alternative) {
 	return bestAlts
 }
 
+// renvoie les pires alternatives pour un décompte donné
+func minCount(count Count) (worstAlts []Alternative) {
+	var max int = 0
+
+	for alt, c := range count {
+		if c > max {
+			max = c
+			worstAlts = []Alternative{alt}
+		} else if c == max {
+			worstAlts = append(worstAlts, alt)
+		}
+	}
+	return worstAlts
+}
+
 // vérifie les préférences d'un agent, par ex. qu'ils sont tous complets et que chaque alternative n'apparaît qu'une seule fois
 func CheckProfile(prefs []Alternative, alts []Alternative) error {
 	//vérifie que profil complet
