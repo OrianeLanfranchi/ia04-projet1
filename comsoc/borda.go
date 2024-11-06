@@ -24,5 +24,9 @@ func BordaSWF(p Profile) (count Count, err error) {
 
 func BordaSCF(p Profile) (bestAlts []Alternative, err error) {
 	count, err := BordaSWF(p)
+	if err != nil {
+		return nil, err
+	}
+
 	return maxCount(count), err
 }
