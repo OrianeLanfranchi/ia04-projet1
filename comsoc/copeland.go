@@ -1,7 +1,6 @@
 package comsoc
 
 func CopelandSWF(p Profile) (count Count, err error) {
-	count = make(Count)
 	err = checkProfileFromProfile(p)
 
 	if err != nil {

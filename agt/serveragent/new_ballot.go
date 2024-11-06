@@ -77,6 +77,12 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	case "borda":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.BordaSCF, tieBreak)
 		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.BordaSWF, tieBreak)
+	case "stv":
+		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.STVSCF, tieBreak)
+		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.STVSWF, tieBreak)
+	case "copeland":
+		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CopelandSCF, tieBreak)
+		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.CopelandSWF, tieBreak)
 	case "condorcet":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
 		// TODO Il faudra anticiper dans le calcul des résultats (result.go) de Condorcet n'a pas de SWF
