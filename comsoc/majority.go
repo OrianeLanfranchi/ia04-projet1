@@ -1,6 +1,6 @@
 package comsoc
 
-//import "fmt"
+import "fmt"
 
 func MajoritySWF(p Profile) (count Count, err error) {
 	err = checkProfileFromProfile(p)
@@ -8,11 +8,15 @@ func MajoritySWF(p Profile) (count Count, err error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("(STVSWF) - p[0] (init) - ", p)
+
 	//initialisation du décompte
 	count = make(Count)
 	for _, alt := range p[0] {
 		count[alt] = 0
 	}
+
+	fmt.Println("(MajoritySWF) - count (init) - ", count)
 
 	//décompte des votes
 	for _, pref := range p {

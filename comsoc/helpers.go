@@ -3,6 +3,7 @@ package comsoc
 import (
 	"errors"
 	"fmt"
+	"math"
 	"slices"
 )
 
@@ -39,13 +40,13 @@ func maxCount(count Count) (bestAlts []Alternative) {
 
 // renvoie les pires alternatives pour un décompte donné
 func minCount(count Count) (worstAlts []Alternative) {
-	var max int = 0
+	var min float64 = math.Inf(1)
 
 	for alt, c := range count {
-		if c > max {
-			max = c
+		if float64(c) < min {
+			min = float64(c)
 			worstAlts = []Alternative{alt}
-		} else if c == max {
+		} else if float64(c) == min {
 			worstAlts = append(worstAlts, alt)
 		}
 	}
@@ -70,6 +71,8 @@ func CheckProfile(prefs []Alternative, alts []Alternative) error {
 			return errors.New("(checkProfile) - Il manque une préférence")
 		}
 	}
+
+	//il faudrait aussi vérifier qu'une alternative n'est pas présente en double
 
 	return nil
 }

@@ -142,3 +142,50 @@ func TestCondorcetWinner(t *testing.T) {
 		t.Errorf("no best alternative for prefs2")
 	}
 }
+
+func TestSTVSWF(t *testing.T) {
+	prefs := [][]Alternative{
+		{1, 2, 3},
+		{1, 3, 2},
+		{2, 3, 1},
+	}
+
+	res, _ := STVSWF(prefs)
+
+	if res[1] != 3 {
+		t.Errorf("error, result for 1 should be 1, %d computed", res[1])
+	}
+	if res[2] != 2 {
+		t.Errorf("error, result for 2 should be 2, %d computed", res[2])
+	}
+	if res[3] != 1 {
+		t.Errorf("error, result for 3 should be 3, %d computed", res[3])
+	}
+
+	res, _ = STVSWF(prefs)
+	if res[1] != 3 {
+		t.Errorf("error, result for 1 should be 1, %d computed", res[1])
+	}
+	if res[2] != 2 {
+		t.Errorf("error, result for 2 should be 2, %d computed", res[2])
+	}
+	if res[3] != 1 {
+		t.Errorf("error, result for 3 should be 3, %d computed", res[3])
+	}
+}
+
+func TestSTVSCF(t *testing.T) {
+	prefs := [][]Alternative{
+		{1, 3, 2},
+		{1, 2, 3},
+		{2, 1, 3},
+	}
+	res, err := STVSCF(prefs)
+
+	if err != nil {
+		t.Error(err)
+	}
+	if len(res) != 1 || res[0] != 1 {
+		t.Errorf("error, 1 should be the only best Alternative")
+	}
+}
