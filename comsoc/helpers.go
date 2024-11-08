@@ -25,13 +25,13 @@ func isPref(alt1, alt2 Alternative, prefs []Alternative) bool {
 
 // renvoie les meilleures alternatives pour un décompte donné
 func maxCount(count Count) (bestAlts []Alternative) {
-	var max int = 0
+	var max float64 = math.Inf(-1)
 
 	for alt, c := range count {
-		if c > max {
-			max = c
+		if float64(c) > max {
+			max = float64(c)
 			bestAlts = []Alternative{alt}
-		} else if c == max {
+		} else if float64(c) == max {
 			bestAlts = append(bestAlts, alt)
 		}
 	}
