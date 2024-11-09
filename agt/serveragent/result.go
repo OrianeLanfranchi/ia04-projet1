@@ -29,7 +29,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 	ballot, ok := rsa.ballots[req.BallotId]
 
 	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusNotFound)
 		msg := fmt.Sprintf("'%s' n'existe pas", req.BallotId)
 		w.Write([]byte(msg))
 		return
