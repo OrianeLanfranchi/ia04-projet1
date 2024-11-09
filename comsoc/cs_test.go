@@ -4,6 +4,66 @@ package comsoc
 
 import "testing"
 
+func TestRank(t *testing.T) {
+	prefs := []Alternative{4, 3, 2, 1, 0}
+	var alt Alternative = 0
+	x := rank(alt, prefs)
+
+	if x != 4 {
+		t.Errorf("Le rang est %d et devrait être 4", x)
+	}
+}
+
+func TestIsPref(t *testing.T) {
+	prefs := []Alternative{4, 3, 2, 1, 0}
+
+	if !isPref(3, 1, prefs) {
+		t.Errorf("3 devrait être préféré à 1")
+	}
+}
+
+func TestMaxCount(t *testing.T) {
+	count := map[Alternative]int{
+
+		0: 4,
+		1: 4,
+		2: 2,
+		3: 2,
+		4: 0,
+	}
+	result := maxCount(count)
+
+	if result[0] != 0 || result[1] != 1 {
+		t.Errorf("les plus haut sont %d et %d au lieu de 0 et 1", result[0], result[1])
+	}
+}
+
+func TestCheckProfile(t *testing.T) {
+	prefs := Preferences{1, 3, 2}
+	alts := []Alternative{1, 2, 3}
+
+	err := CheckProfile(prefs, alts)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+}
+
+func TestCheckProfileAlterative(t *testing.T) {
+	prefs := Profile{
+		{1, 2, 3},
+		{1, 2, 3},
+		{3, 2, 1},
+	}
+	alts := []Alternative{1, 2, 3}
+
+	err := checkProfileAlternative(prefs, alts)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+}
+
 func TestBordaSWF(t *testing.T) {
 	prefs := [][]Alternative{
 		{1, 2, 3},
