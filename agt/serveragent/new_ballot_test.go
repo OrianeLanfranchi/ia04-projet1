@@ -19,7 +19,7 @@ func LaunchTestServer() (server *ServerAgent, handler *http.ServeMux) {
 	return
 }
 
-func ExecuteNewBallotRequest(req rad.BallotRequest, handler *http.ServeMux) *httptest.ResponseRecorder {
+func ExecuteTestNewBallotRequest(req rad.BallotRequest, handler *http.ServeMux) *httptest.ResponseRecorder {
 	data, _ := json.Marshal(req)
 
 	w := httptest.NewRecorder()
@@ -39,7 +39,7 @@ func TestDoNewBallot(t *testing.T) {
 		VotersId: []string{"1", "2", "3"},
 		NbAlts:   2}
 
-	w := ExecuteNewBallotRequest(req, handler)
+	w := ExecuteTestNewBallotRequest(req, handler)
 	resp := w.Result()
 
 	//if server error :
@@ -72,7 +72,7 @@ func TestDoNewBallotDeadlineBefore(t *testing.T) {
 		VotersId: []string{"1", "2", "3"},
 		NbAlts:   2}
 
-	w := ExecuteNewBallotRequest(req, handler)
+	w := ExecuteTestNewBallotRequest(req, handler)
 	resp := w.Result()
 	//if server error :
 	if resp.StatusCode != http.StatusBadRequest {
@@ -90,7 +90,7 @@ func TestDoNewBallotRuleNotImplemented(t *testing.T) {
 		VotersId: []string{"1", "2", "3"},
 		NbAlts:   2}
 
-	w := ExecuteNewBallotRequest(req, handler)
+	w := ExecuteTestNewBallotRequest(req, handler)
 	resp := w.Result()
 	//if server error :
 	if resp.StatusCode != http.StatusNotImplemented {
