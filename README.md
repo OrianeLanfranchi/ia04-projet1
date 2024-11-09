@@ -8,7 +8,9 @@ Le projet implémente également une architecture pour les agents votants, et g�
 
 ## Récupérer et exécuter le projet
 Il est possible de récupérer le package du serveur en lançant la commande suivante :
+
 `go install github.com/OrianeLanfranchi/ia04-projet1/cmd/launchServerAgent`
+
 
 Si cela ne fonctionne pas, il est possible de lancer le projet en récupérant ce code source.
 * Pour lancer le serveur, il faut alors lancer la commande :
