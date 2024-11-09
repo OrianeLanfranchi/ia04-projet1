@@ -73,8 +73,8 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Calcul du ranking
-	//C'est un cas spécifique pour Condorcet, qui n'a pas de SWF (je sais, ce n'est pas propre)
-	if ballot.Rule != "condorcet" {
+	//On vérifie que la règle de vote comporte bien une SWF (c'est pas propre, je sais)
+	if ballot.SWF.FuncNoOption != nil || ballot.SWF.FuncOneOption != nil {
 		ranking, errSWF := ballot.SWF.Call(ballot.Profile, ballot.Options)
 
 		if errSWF != nil && winner == cs.Alternative(-1) {
@@ -90,6 +90,24 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 			ballot.Result.Ranking[i] = int(ranking[i])
 		}
 	}
+
+	//Sinon comme Condorcet est la seule règle du projet pour laquelle il n'y a pas de SWF, on pourrait écrire la condition ainsi : (ce qui n'est toujours pas propre)
+	/*if ballot.Rule != "condorcet" {
+		ranking, errSWF := ballot.SWF.Call(ballot.Profile, ballot.Options)
+
+		if errSWF != nil && winner == cs.Alternative(-1) {
+			w.WriteHeader(http.StatusInternalServerError)
+			msg := fmt.Sprintf("'%s' ne peut pas être traité", req.BallotId)
+			w.Write([]byte(msg))
+			return
+		}
+
+		fmt.Println("ranking :", ranking)
+		ballot.Result.Ranking = make([]int, len(ranking))
+		for i := range ranking {
+			ballot.Result.Ranking[i] = int(ranking[i])
+		}
+	}*/
 
 	ballot.Result.Winner = int(winner)
 	rsa.ballots[req.BallotId] = ballot
