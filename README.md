@@ -7,7 +7,11 @@ Ce projet implémente un agent serveur permettant de gérer des scrutins basés 
 Le projet implémente également une architecture pour les agents votants, et générer des requêtes.
 
 ## Récupérer et exécuter le projet
-Il est possible de récupérer le package du serveur en lançant la commande suivante :
+Récupérer les sources du serveur :
+
+`go get github.com/OrianeLanfranchi/ia04-projet1/cmd/launchServerAgent`
+
+Puis :
 
 `go install github.com/OrianeLanfranchi/ia04-projet1/cmd/launchServerAgent`
 
