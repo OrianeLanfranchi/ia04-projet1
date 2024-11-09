@@ -67,7 +67,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	}
 	rand.Shuffle(req.NbAlts, func(i, j int) { orderedAlts[i], orderedAlts[j] = orderedAlts[j], orderedAlts[i] })
 
-	fmt.Println("Debug - new_ballot - ordered alts : ", orderedAlts)
+	//fmt.Println("Debug - new_ballot - ordered alts : ", orderedAlts)
 	tieBreak := cs.TieBreakFactory(orderedAlts)
 
 	switch req.Rule {
@@ -85,7 +85,6 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 		ballot.SWF.FuncNoOption = cs.SWFFactory(cs.CopelandSWF, tieBreak)
 	case "condorcet":
 		ballot.SCF.FuncNoOption = cs.SCFFactory(cs.CondorcetWinner, tieBreak)
-		// TODO Il faudra anticiper dans le calcul des résultats (result.go) de Condorcet n'a pas de SWF
 	case "approval":
 		ballot.SCF.FuncOneOption = cs.SCFOptionFactory(cs.ApprovalSCF, tieBreak)
 		ballot.SWF.FuncOneOption = cs.SWFOptionFactory(cs.ApprovalSWF, tieBreak)
@@ -98,11 +97,8 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 
 	rsa.ballots[resp.ID] = ballot
 
-	fmt.Println("DEBUG NEW_BALLOT :")
-	fmt.Println(ballot)
-
-	//DEBUG - Si on a un pb c'est parce qu'on a lancé une goroutine sur un mutex locked
-	// TODO - lancer une goroutine qui handle le ballot (ballotHandler pour le nom ?)
+	//fmt.Println("DEBUG NEW_BALLOT :")
+	//fmt.Println(ballot)
 
 	w.WriteHeader(http.StatusOK)
 	serial, _ := json.Marshal(resp)
