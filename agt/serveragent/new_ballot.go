@@ -104,7 +104,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	//DEBUG - Si on a un pb c'est parce qu'on a lancé une goroutine sur un mutex locked
 	// TODO - lancer une goroutine qui handle le ballot (ballotHandler pour le nom ?)
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusAccepted)
 	serial, _ := json.Marshal(resp)
 	w.Write(serial)
 }

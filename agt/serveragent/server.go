@@ -42,15 +42,11 @@ func decodeRequest[Req rad.Request](r *http.Request) (req Req, err error) {
 }
 
 func (rsa *ServerAgent) Start() {
-	// création du multiplexer
-	mux := http.NewServeMux()
-	mux.HandleFunc("POST /new_ballot", rsa.doNewBallot)
-	mux.HandleFunc("POST /vote", rsa.doVote)
-	mux.HandleFunc("POST /result", rsa.doResult)
+
+	mux := rsa.SetUpHandlers()
 
 	//init map
-	rsa.ballots = make(map[string]rad.Ballot)
-
+	rsa.InitBallots()
 	// création du serveur http
 	s := &http.Server{
 		Addr:           rsa.addr,
@@ -62,4 +58,17 @@ func (rsa *ServerAgent) Start() {
 	// lancement du serveur
 	log.Println("Listening on", rsa.addr)
 	go log.Fatal(s.ListenAndServe())
+}
+
+// création du multiplexer
+func (rsa *ServerAgent) SetUpHandlers() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /new_ballot", rsa.doNewBallot)
+	mux.HandleFunc("POST /vote", rsa.doVote)
+	mux.HandleFunc("POST /result", rsa.doResult)
+	return mux
+}
+
+func (rsa *ServerAgent) InitBallots() {
+	rsa.ballots = make(map[string]rad.Ballot)
 }
