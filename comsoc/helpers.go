@@ -73,8 +73,31 @@ func CheckProfile(prefs []Alternative, alts []Alternative) error {
 	}
 
 	//il faudrait aussi vérifier qu'une alternative n'est pas présente en double
+	isUnique := CheckUniquePreferences(prefs)
+
+	if !isUnique {
+		fmt.Println("(checkProfile) - (prefs) - ", prefs)
+		return errors.New("(checkProfile) - La même alternative est présente plusieurs fois dans les préférences")
+	}
 
 	return nil
+}
+
+func CheckUniquePreferences(alts []Alternative) bool {
+	unique := make(map[Alternative]int, len(alts))
+
+	for _, alt := range alts {
+		unique[alt] = 0
+	}
+
+	for _, alt := range alts {
+		unique[alt]++
+		if unique[alt] > 1 {
+			return false
+		}
+	}
+
+	return true
 }
 
 func checkProfileAlternative(prefs Profile, alts []Alternative) error {

@@ -225,3 +225,18 @@ func TestCopelandSWF(t *testing.T) {
 		t.Errorf("error, result for 3 should be 3, %d computed", res[3])
 	}
 }
+
+func TestUniqueAlts(t *testing.T) {
+	pref1 := []Alternative{1, 2, 3}
+	pref2 := []Alternative{1, 2, 4, 4, 5}
+	res1 := CheckUniquePreferences(pref1)
+	res2 := CheckUniquePreferences(pref2)
+
+	if res1 != true {
+		t.Errorf("error, result for res1 should be True, False computed")
+	}
+
+	if res2 != false {
+		t.Errorf("error, result for res1 should be False, True computed")
+	}
+}

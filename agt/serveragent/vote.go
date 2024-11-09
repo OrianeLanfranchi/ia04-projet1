@@ -65,7 +65,7 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 
 	ballot.VotersId = removeFromSliceString(ballot.VotersId, req.AgentId)
 
-	// Vérification sur la taille des préférences
+	//Vérification sur la taille des préférences (au moins une préférence, pas plus de préférences qu'il n'y a d'alternatives)
 	if (len(req.Prefs) == 0) || (len(req.Prefs) > ballot.NbAlts) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := fmt.Sprintf("'%s' - Les préférences du votant %s ne sont pas bien formattées (trop ou pas assez d'alternatives)", req.VoteId, req.AgentId)
@@ -73,12 +73,11 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Vérification que les valeurs des préférences ne sont pas aberrantes
 	prefs := make([]cs.Alternative, 0)
 
 	for i := range req.Prefs {
-		// On vérifie au passage que les valeurs des préférences ne sont pas aberrantes
 		if (req.Prefs[i] > ballot.NbAlts) || (req.Prefs[i] < 1) {
-			fmt.Println("DEBUG VOTE")
 			fmt.Println(req.Prefs[i])
 			w.WriteHeader(http.StatusBadRequest)
 			msg := fmt.Sprintf("'%s' - Les préférences du votant %s ne sont pas bien formattées", req.VoteId, req.AgentId)
@@ -88,11 +87,9 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 		prefs = append(prefs, cs.Alternative(req.Prefs[i]))
 	}
 
-	// Système pour vérifier les profils (il va falloir discriminer sur la base de la règle, parce que pas de vérification (autre que au moins une pref) dans le cas de Approval)
-	// Oui, c'est pas le plus propre, je sais
-	if ballot.Rule != "approval" { //on vérifie que le profil est complet et bien construit
+	//On vérifie que le profil est bien construit
+	if ballot.Rule != "approval" { //Comme approval ne nécessite pas que le profil de préférences soit complet, on discrimine ce cas (c'est pas propre, je sais)
 		alternativesTemp := make([]cs.Alternative, ballot.NbAlts)
-		fmt.Println("DEBUG VOTE")
 		for i := range ballot.NbAlts {
 			alternativesTemp[i] = cs.Alternative(i + 1)
 			fmt.Println(alternativesTemp[i])
@@ -116,7 +113,8 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 		ballot.Options = append(ballot.Options, req.Option)
 	}
 
-	if len(req.Option) == 0 && ballot.Rule == "approval" {
+	// Vérification des options de vote
+	if len(req.Option) == 0 && ballot.Rule == "approval" { //C'est tjrs pas propre, je sais
 		w.WriteHeader(http.StatusBadRequest)
 		msg := fmt.Sprintf("'%s' - Les options pour le vote du votant %s ne sont pas bien formattées", req.VoteId, req.AgentId)
 		w.Write([]byte(msg))

@@ -54,11 +54,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// else on le calcule directement
-	// TODO - le mettre dans une fonction dédiée ? ce serait plus propre mais qui on est
-	// TODO - Ranking (pour l'instant je le laisse à 0 parce que flemme)
-
-	//DEBUG - Bien vérifier le formattage des options. Logiquement on ne traite que les cas où il y a 0 ou 1 option. Faire un système scalable si on devait update le serveur pour qu'il prenne en compte des votes avec + d'options
+	//Sinon on calcule les résultats :
 	if ballot.Options == nil && ballot.SCF.FuncNoOption == nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		msg := fmt.Sprintf("'%s' est mal formé et aucun résultat ne peut être déduit", req.BallotId)
@@ -66,9 +62,7 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// C'est pas le truc le plus propre mais ça fonctionne (j'espère)
-	//DEBUG - peut-être que ça peut planter ici on sait pas // Update ça plante pas ici pour le vote majoritaire
-
+	//Calcul du gagnant
 	winner, errSCF := ballot.SCF.Call(ballot.Profile, ballot.Options)
 
 	if errSCF != nil {
@@ -78,19 +72,18 @@ func (rsa *ServerAgent) doResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Calcul du ranking
+	//C'est un cas spécifique pour Condorcet, qui n'a pas de SWF (je sais, ce n'est pas propre)
 	if ballot.Rule != "condorcet" {
 		ranking, errSWF := ballot.SWF.Call(ballot.Profile, ballot.Options)
 
-		if errSWF != nil && winner == cs.Alternative(-1) { //parce que si c'est Condorcet on aura évidemment une erreur sauf qu'on aura pas de ranking (c'est pas propre, je sais) ((et en plus techniquement ce bout de code ne sert pas))
+		if errSWF != nil && winner == cs.Alternative(-1) {
 			w.WriteHeader(http.StatusInternalServerError)
 			msg := fmt.Sprintf("'%s' ne peut pas être traité", req.BallotId)
 			w.Write([]byte(msg))
 			return
 		}
 
-		//DEBUG - ça peut planter ici si on a du Condorcet parce que ranking sera nil
-		// TODO - faire en sorte que ça ne plante pas
-		fmt.Println("DEBUG (condorcet check)")
 		fmt.Println("ranking :", ranking)
 		ballot.Result.Ranking = make([]int, len(ranking))
 		for i := range ranking {
