@@ -22,12 +22,12 @@ Le format des requêtes et des réponses suit le document api de référence, du
 Le seul ajout par rapport au document de référence est le possible retour d'un code HTTP Status Internal Server Error (503) lors de la récupération des résultats d'un scrutin, dans le cas où il n'y a pas de gagnant.
 
 ## Méthodes de vote
-Les méthodes de vote implémentées (avec correspondance de la nomeclature de l'API) sont :
+Les méthodes de vote implémentées (avec correspondance de la nomenclature de l'API) sont :
 * Majorité : `majority`
 * Borda : `borda`
 * STV : `stv`
 * Copeland : `copeland`
-* Condorcet : `condorcet` (à noter que condorcet ne retourne pas de ranking, seulement un gagnant si celui-ci existe)
+* Condorcet : `condorcet` (à noter que la règle Condorcet ne retourne pas de classement ; seulement un gagnant si celui-ci existe)
 * Approval : `approval`
 
 ## Agents implémentés
@@ -36,6 +36,6 @@ Ce projet implémente un serveur de vote et des agents votants génériques, don
 ## Améliorations possibles du projet
 Il serait possible (et souhaitable) de rendre plus scalable le système de vérification des préférences des votants (en particulier).
 
-L'idée actuelle serait de rajouter un attribu "Verification" pour chaque ballot stocké par le serveur, qui comporterait une fonctione de vérification des préférences propre au ballot, et en adéquation avec la règle de vote. Il suffirait alors de l'exécuter pour vérifier que les préférences d'un agent votant sont correctement formatées. En effet, la règle de vote Approval ne nécessite pas les mêmes vérifications que les autres règles de vote (et si on souhaite ajouter de nouvelles règles de vote au serveur, elles-mêmes auront peut-être d'autres vérifications à réaliser).
+L'idée actuelle serait de rajouter un attribut "Verification" pour chaque ballot stocké par le serveur, qui comporterait une fonction de vérification des préférences propre au ballot, et en adéquation avec la règle de vote. Il suffirait alors de l'exécuter pour vérifier que les préférences d'un agent votant sont correctement formatées. En effet, la règle de vote Approval ne nécessite pas les mêmes vérifications que les autres règles de vote (et si on souhaite ajouter de nouvelles règles de vote au serveur, elles-mêmes auront peut-être d'autres vérifications à réaliser).
 
-Egalement, pour la récupération des résultats, il est possible d'obtenir un gagnant, mais pas de ranking (ce qui est le cas de Condorcet ici). Tel que le projet est actuellement constitué, il y a une condition dans la récupération des résultats pour déterminer s'il faut récupérer le résulat du classement. Ce n'est pas très esthétique. Cela pourrait être amélioré.
+Egalement, pour la récupération des résultats, il est possible d'obtenir un gagnant, mais pas de classement (ce qui est le cas de la règle Condorcet ici). Tel que le projet est actuellement constitué, il y a une condition dans la récupération des résultats pour déterminer s'il faut récupérer le résultat du classement. Ce n'est pas très esthétique. Cela pourrait être amélioré.
