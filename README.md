@@ -25,7 +25,7 @@ Si cela ne fonctionne pas, il est possible de lancer le projet en récupérant c
 ## API
 Le format des requêtes et des réponses suit le document api de référence, dupliqué dans ce projet : `api.md`
 
-Le seul ajout par rapport au document de référence est le possible retour d'un code HTTP Status Internal Server Error (503) lors de la récupération des résultats d'un scrutin, dans le cas où il n'y a pas de gagnant.
+Le seul ajout par rapport au document de référence est le possible retour d'un code HTTP Status Internal Server Error (503) lors de la récupération des résultats d'un scrutin, dans le cas où il n'y a pas de gagnant ou si le scrutin est mal formé (donc impossible de l'évaluer).
 
 ## Méthodes de vote
 Les méthodes de vote implémentées (avec correspondance de la nomenclature de l'API) sont :

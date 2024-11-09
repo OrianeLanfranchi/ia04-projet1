@@ -13,9 +13,16 @@ func ApprovalSWF(p Profile, thresholds []int) (count Count, err error) {
 	}
 
 	for index, alt := range p {
-		for i := 0; i < thresholds[index]; i++ {
-			count[alt[i]] += 1
+		if thresholds[index] <= len(alt) {
+			for i := 0; i < thresholds[index]; i++ {
+				count[alt[i]] += 1
+			}
+		} else {
+			for i := 0; i < len(alt); i++ {
+				count[alt[i]] += 1
+			}
 		}
+
 	}
 	return count, nil
 }
