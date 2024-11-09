@@ -11,9 +11,9 @@ Il est possible de récupérer le package du serveur en lançant la commande sui
 `go install github.com/OrianeLanfranchi/ia04-projet1/cmd/launchServerAgent`
 
 Si cela ne fonctionne pas, il est possible de lancer le projet en récupérant ce code source.
-Pour lancer le serveur, il faut alors lancer la commande :
+* Pour lancer le serveur, il faut alors lancer la commande :
 `go run launchServerAgent.go` (dossier cmd/launchServerAgent)
-Pour lancer un agent, il faut lancer la commande :
+* Pour lancer un agent, il faut lancer la commande :
 `go run launchVoteAgent.go` (dossier cmd/launchVoteAgent)
 
 ## API
