@@ -57,7 +57,7 @@ func (rca *RestClientAgent) Start() {
 	//par défaut
 	rca.options = append(rca.options, rca.nbAlts)
 
-	//créer le profil de préférences à partir du nomb d'alternatives
+	//Création aléatoire du profil de préférences à partir du nombre d'alternatives
 	var orderedAlts = make([]int, rca.nbAlts)
 	for i := range rca.nbAlts {
 		orderedAlts[i] = (i + 1)

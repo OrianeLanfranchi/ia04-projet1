@@ -66,7 +66,6 @@ type SCFWrapper struct {
 	FuncOneOption SCFOption
 }
 
-// TODO - améliorer la méthode Call pour qu'elle fasse toutes les vérifications
 func (w SCFWrapper) Call(profile cs.Profile, options [][]int) (cs.Alternative, error) {
 	if w.FuncNoOption != nil {
 		return w.FuncNoOption(profile)
