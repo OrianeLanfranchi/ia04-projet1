@@ -31,7 +31,7 @@ Les méthodes de vote implémentées (avec correspondance de la nomeclature de l
 * Approval : `approval`
 
 ## Agents implémentés
-Ce projet implémente le serveur de vote et des agents votants génériques, dont les paramètres de votes sont à modifier pour respecter les règles du scrutin pour lequel ils doivent voter.
+Ce projet implémente un serveur de vote et des agents votants génériques, dont les paramètres de votes sont à modifier pour respecter les règles du scrutin pour lequel ils doivent voter.
 
 ## Améliorations possibles du projet
 Il serait possible (et souhaitable) de rendre plus scalable le système de vérification des préférences des votants (en particulier).
