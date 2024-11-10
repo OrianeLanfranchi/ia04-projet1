@@ -42,22 +42,25 @@ func (rsa *ServerAgent) doVote(w http.ResponseWriter, r *http.Request) {
 
 	ballot, ok := rsa.ballots[req.VoteId]
 
+	//Check si le scrutin existe
 	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusNotImplemented)
 		msg := fmt.Sprintf("'%s' n'existe pas", req.VoteId)
 		w.Write([]byte(msg))
 		return
 	}
 
+	//Check si la deadline est dépassée
 	if ballot.Deadline.Before(time.Now()) {
-		w.WriteHeader(http.StatusTooEarly)
+		w.WriteHeader(http.StatusServiceUnavailable)
 		msg := fmt.Sprintf("'%s' est terminé ; les votes ne sont plus acceptés", req.VoteId)
 		w.Write([]byte(msg))
 		return
 	}
 
+	//Check si le voteur a le droit voter
 	if !slices.Contains(ballot.VotersId, req.AgentId) {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusForbidden)
 		msg := fmt.Sprintf("'%s' ne concerne pas le votant %s, ou bien il a déjà voté", req.VoteId, req.AgentId)
 		w.Write([]byte(msg))
 		return

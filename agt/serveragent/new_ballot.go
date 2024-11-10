@@ -100,7 +100,7 @@ func (rsa *ServerAgent) doNewBallot(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("DEBUG NEW_BALLOT :")
 	//fmt.Println(ballot)
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusAccepted)
 	serial, _ := json.Marshal(resp)
 	w.Write(serial)
 }
